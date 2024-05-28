@@ -175,5 +175,4 @@ config.py
 *.pkl
 *.zip
 
-saiga_llama3_8b/
-saiga2_13b_lora/
+models/

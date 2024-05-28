@@ -1,34 +1,56 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 import torch
+from datetime import datetime
+
+start = datetime.now()
+print(f"start test model at {start}")
 
 
+# model_name = "under-tree/YAGPT"
 # model_name = "microsoft/DialoGPT-medium"
 # model_name = "IlyaGusev/saiga_llama3_8b" # не грузится , 57,5 k
 # model_name = "IlyaGusev/saiga_llama3_8b_gguf"  # needs config.json, 17,8 k
 # model_name = "IlyaGusev/saiga2_7b_lora" # needs config.json, in extraction_saiga 
-# model_name = 'Vikhrmodels/Vikhr-7b-0.1'
+# model_name = 'Vikhrmodels/Vikhr-7b-0.1' # большая  
 # model_name = 'ai-forever/ruGPT-3.5-13B' # 2,71 k, очень жирная! 
-model_name = 'ai-forever/ruRoberta-large' # 101,378 k  try it! 
+# model_name = 'ai-forever/ruRoberta-large' # 101,378 k  try it! висит
 
-# model_path = 'saiga_llama3_8b/'
-# model_path = 'saiga2_13b_lora/' # try it! 
+model_path = 'models/saiga_llama3_8b/'
+# model_path = 'models/rubert-base-cased/' # try it! 
+# model_path = 'models/saiga2_13b_lora/' # try it! 
 
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path)
 
 # text = "why do you think that I will fall?"
-text = "из чего сделаны девчонки?"
+text = "назови самого могущественного волшебника"
 
 input_ids = tokenizer.encode(text + tokenizer.eos_token, return_tensors="pt")
 
+
+# chat_history_ids = model.generate(
+# input_ids,
+#  bos_token_id= 1,
+#   do_sample= True,
+#   eos_token_id= 2,
+#   max_new_tokens= 3584,
+#   no_repeat_ngram_size= 15,
+#   pad_token_id= 0,
+#   repetition_penalty= 1.2,
+#   temperature= 0.5,
+#   top_k= 30,
+#   top_p= 0.9
+# )
+
+
 chat_history_ids = model.generate(
 input_ids,
-# max_length=1000,
 pad_token_id=tokenizer.eos_token_id,
-max_length=512,
-max_new_tokens=1000,
+max_length=100, # влияет на скорость работы 
+max_new_tokens=100, # влияет на скорость работы 
 # do_sample=True,
+# num_beams=5, # beam-search
 )
 
 output = tokenizer.decode(chat_history_ids[:, input_ids.shape[-1]:][0], skip_special_tokens=True)
@@ -112,3 +134,5 @@ print(f"DialoGPT: {output}")
     
 #     # pretty print last ouput tokens from bot
 #     print(f"===> GPT-3:  {tokenizer.decode(chat_history_ids[:, input_len:][0], skip_special_tokens=True)}")
+
+print(f'Pipeline worked {datetime.now() - start} seconds')
