@@ -3,17 +3,19 @@ import torch
 
 
 # model_name = "microsoft/DialoGPT-medium"
-model_name = "IlyaGusev/saiga_llama3_8b"
+# model_name = "IlyaGusev/saiga_llama3_8b" # не грузится , 57,5 k
+# model_name = "IlyaGusev/saiga_llama3_8b_gguf"  # needs config.json, 17,8 k
+# model_name = "IlyaGusev/saiga2_7b_lora" # needs config.json, in extraction_saiga 
 # model_name = 'Vikhrmodels/Vikhr-7b-0.1'
+# model_name = 'ai-forever/ruGPT-3.5-13B' # 2,71 k, очень жирная! 
+model_name = 'ai-forever/ruRoberta-large' # 101,378 k  try it! 
 
-model_path = 'saiga_llama3_8b/'
-
-
-
+# model_path = 'saiga_llama3_8b/'
+# model_path = 'saiga2_13b_lora/' # try it! 
 
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_name)
 
 # text = "why do you think that I will fall?"
 text = "из чего сделаны девчонки?"
@@ -22,9 +24,11 @@ input_ids = tokenizer.encode(text + tokenizer.eos_token, return_tensors="pt")
 
 chat_history_ids = model.generate(
 input_ids,
-max_length=1000,
+# max_length=1000,
 pad_token_id=tokenizer.eos_token_id,
-# do_sample=True
+max_length=512,
+max_new_tokens=1000,
+# do_sample=True,
 )
 
 output = tokenizer.decode(chat_history_ids[:, input_ids.shape[-1]:][0], skip_special_tokens=True)
