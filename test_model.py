@@ -8,26 +8,31 @@ print(f"start test model at {start}")
 
 # model_name = "under-tree/YAGPT"
 # model_name = "microsoft/DialoGPT-medium"
-# model_name = "IlyaGusev/saiga_llama3_8b" # не грузится , 57,5 k
+# model_name = "IlyaGusev/saiga_llama3_8b" # нужна оперативка max 45 гб и 1 видюха, 57,5 k
 # model_name = "IlyaGusev/saiga_llama3_8b_gguf"  # needs config.json, 17,8 k
-# model_name = "IlyaGusev/saiga2_7b_lora" # needs config.json, in extraction_saiga 
+# model_name = "IlyaGusev/saiga2_7b_lora" # needs config.json, example in extraction_saiga 
 # model_name = 'Vikhrmodels/Vikhr-7b-0.1' # большая  
-# model_name = 'ai-forever/ruGPT-3.5-13B' # 2,71 k, очень жирная! 
-# model_name = 'ai-forever/ruRoberta-large' # 101,378 k  try it! висит
+# model_name = 'ai-forever/ruGPT-3.5-13B' # 2,71 k, очень жирная! yandex 
+# model_name = 'ai-forever/ruRoberta-large' # 101,378 k  try it! висит с оперативой 16 к
+# https://github.com/yandex/YaLM-100B
 
-model_path = 'models/saiga_llama3_8b/'
+# model_path = 'models/saiga_llama3_8b/' #  рабочая
 # model_path = 'models/rubert-base-cased/' # try it! 
 # model_path = 'models/saiga2_13b_lora/' # try it! 
 
+# model_path = 'models/distilrubert-tiny-cased-conversational-v1' # ошибка 
+# model_path = 'models/rubert-base-cased'
 
-tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = AutoModelForCausalLM.from_pretrained(model_path)
+print(f'model_name {model_name}')
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
 
 # text = "why do you think that I will fall?"
-text = "назови самого могущественного волшебника"
+text = "как дела?"
 
 input_ids = tokenizer.encode(text + tokenizer.eos_token, return_tensors="pt")
-
+# input_ids = tokenizer.encode(text, return_tensors="pt")
 
 # chat_history_ids = model.generate(
 # input_ids,
@@ -49,7 +54,7 @@ input_ids,
 pad_token_id=tokenizer.eos_token_id,
 max_length=100, # влияет на скорость работы 
 max_new_tokens=100, # влияет на скорость работы 
-# do_sample=True,
+do_sample=True,
 # num_beams=5, # beam-search
 )
 
