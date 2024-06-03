@@ -16,20 +16,33 @@ print(f"start test model at {start}")
 # model_name = 'ai-forever/ruRoberta-large' # 101,378 k  try it! висит с оперативой 16 к
 # https://github.com/yandex/YaLM-100B
 
-# model_path = 'models/saiga_llama3_8b/' #  рабочая
+model_path = 'models/saiga_llama3_8b/' #  рабочая
 # model_path = 'models/rubert-base-cased/' # try it! 
 # model_path = 'models/saiga2_13b_lora/' # try it! 
 
 # model_path = 'models/distilrubert-tiny-cased-conversational-v1' # ошибка 
 # model_path = 'models/rubert-base-cased'
 
-print(f'model_name {model_name}')
+# print(f'model_name {model_name}')
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path)
+
+chunks_join = """В ВТБ работают 3 директора."""
+query = """Сколько директоров работают в ВТБ"""
 
 # text = "why do you think that I will fall?"
-text = "как дела?"
+# text = "ВТБ это государственный банк?"
+
+text = """Используй только следующий контекст, чтобы очень кратко ответить на вопрос в конце.
+    Не пытайся выдумывать ответ.
+    Контекст:
+    ===========
+    В ВТБ работает тим лид Ян, дата сайнтист Таня и Максим. В ВТБ не работает Саша Рожков.
+    ===========
+    Вопрос:
+    ===========
+    Кто работает в ВТБ?"""
 
 input_ids = tokenizer.encode(text + tokenizer.eos_token, return_tensors="pt")
 # input_ids = tokenizer.encode(text, return_tensors="pt")
